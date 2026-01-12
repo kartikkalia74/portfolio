@@ -1,0 +1,132 @@
+---
+title: "How to Get Your Supabase Database URL and Run SQL Queries with Edge Functions"
+description: "A quick guide to copying your Supabase database connection string and running SQL queries securely using Edge Functions or Node.js backend."
+pubDate: 2025-07-04
+author: "Kartik kalia"
+heroImage: "/blogs/run-sql-query-supabase/thumbnail.png"
+tags: ["supabase", "postgresql", "database", "sql", "edge functions", "backend"]
+---
+
+import Tabs from '../../components/Tabs.astro';
+import TabItem from '../../components/TabItem.astro';
+
+Supabase makes it easy to use a powerful PostgreSQL database in your projects. However, for security and best practices, Supabase does **not** provide a direct way to run arbitrary SQL queries from the dashboard or client-side code.  
+**You should always run SQL queries from your backend or serverless (edge) functions.**
+
+---
+
+## 1. How to Get Your Supabase Database URL
+
+To connect to your Supabase database, you need the connection string (URL). Here's how to find it:
+
+### Step 1: Open Your Project and Click "Connect"
+
+Go to your Supabase project dashboard.  
+Click the **Connect** button in the top right corner:
+
+![Navigate to Connect Button](/blogs/run-sql-query-supabase/navigatetodatabaseconnect.png)
+*Click the "Connect" button to open the connection options.*
+
+### Step 2: Copy the Database Connection String
+
+A modal will appear with several connection options:
+- **Direct connection**
+- **Transaction pooler** (recommended for serverless/edge functions)
+- **Session pooler**
+
+For most backend and edge use cases, **copy the Transaction pooler connection string**:
+
+![Supabase Connection Options](/blogs/run-sql-query-supabase/supabaseconnection.png)
+*Copy the connection string for your preferred pooler type. For serverless and edge functions, use the Transaction pooler.*
+
+> **Tip:**  
+> - Use the **Transaction pooler** for stateless, serverless, or edge environments.  
+> - Use the **Direct connection** only for long-lived, persistent connections (e.g., VMs or containers).  
+> - The **Session pooler** is for IPv4-only networks.
+
+---
+
+## 2. How to Run SQL Queries Using the Database URL
+
+<Tabs>
+  <TabItem label="Node.js">
+    Install the `pg` package:
+
+    ```bash
+    npm install pg
+    ```
+
+    Example code to run a SQL query:
+
+    ```javascript
+    const { Pool } = require('pg')
+
+    // Use your Transaction pooler connection string from Supabase
+    const pool = new Pool({
+      connectionString: 'postgresql://postgres:[YOUR-PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require'
+    })
+
+    async function runQuery() {
+      const client = await pool.connect()
+      try {
+        const res = await client.query('SELECT NOW()')
+        console.log(res.rows)
+      } finally {
+        client.release()
+      }
+    }
+
+    runQuery().catch(console.error)
+    ```
+  </TabItem>
+  
+  <TabItem label="Edge Functions (Deno)">
+    You can use the connection string in your Edge Function with a Deno Postgres client:
+
+    ```typescript
+    import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+    import { Pool } from 'https://deno.land/x/postgres@v0.17.0/mod.ts'
+
+    const pool = new Pool({
+      hostname: Deno.env.get('DB_HOST'),
+      database: Deno.env.get('DB_NAME'),
+      user: Deno.env.get('DB_USER'),
+      password: Deno.env.get('DB_PASSWORD'),
+      port: 5432,
+      tls: { enabled: true },
+      max: 10,
+    })
+
+    serve(async (req) => {
+      const client = await pool.connect()
+      try {
+        const result = await client.queryObject('SELECT NOW()')
+        return new Response(JSON.stringify(result.rows), { headers: { 'Content-Type': 'application/json' } })
+      } finally {
+        client.release()
+      }
+    })
+    ```
+
+    Set your environment variables (`DB_HOST`, `DB_NAME`, etc.) using the values from your Supabase connection string.
+  </TabItem>
+</Tabs>
+
+---
+
+## Important Security Note
+
+- **Never expose your database connection string in client-side code.**
+- Always run SQL queries from your backend or edge/serverless functions.
+- Supabase recommends using their client libraries for most operations, but for custom SQL, always use a secure backend.
+
+---
+
+## Summary
+
+- Get your database URL from the Supabase dashboard via the **Connect** button.
+- Use the **Transaction pooler** connection string for most backend/edge/serverless use cases.
+- Run SQL queries using the `pg` npm package (Node.js) or a Deno Postgres client (Edge Functions).
+- Never run SQL queries directly from the client or expose your credentials.
+
+Happy coding!

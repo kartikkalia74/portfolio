@@ -1,0 +1,699 @@
+---
+export interface Props {
+  children: any;
+}
+
+const { children } = Astro.props;
+---
+
+<div class="tab-container" data-tabs>
+  <div class="tab-buttons">
+  </div>
+  <div class="tab-content">
+    <slot />
+  </div>
+</div>
+
+<script is:inline>
+  (function() {
+    function addCopyButtons() {
+      document.querySelectorAll('pre code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        if (pre.querySelector('.copy-btn')) return; // Avoid duplicates
+
+        const button = document.createElement('button');
+        button.className = 'copy-btn';
+        button.textContent = 'Copy Code';
+        button.onclick = () => {
+          navigator.clipboard.writeText(codeBlock.textContent).then(() => {
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+              button.textContent = 'Copy Code';
+              button.classList.remove('copied');
+            }, 2000);
+          }).catch(err => {
+            console.error('Failed to copy: ', err);
+            button.textContent = 'Failed to copy';
+          });
+        };
+        pre.style.position = 'relative';
+        pre.appendChild(button);
+      });
+    }
+
+    function initializeTabs() {
+      const tabContainers = document.querySelectorAll('[data-tabs]');
+      
+      tabContainers.forEach((container) => {
+        const tabItems = container.querySelectorAll('[data-tab-item]');
+        const tabButtonsContainer = container.querySelector('.tab-buttons');
+        
+        if (!tabItems.length || !tabButtonsContainer) return;
+        
+        // Clear existing buttons
+        tabButtonsContainer.innerHTML = '';
+        
+        // Create tab buttons
+        tabItems.forEach((item, index) => {
+          const label = item.getAttribute('data-label') || `Tab ${index + 1}`;
+          const button = document.createElement('button');
+          
+          // Define colors for each tab index
+          const colors = [
+            { default: '#667eea', hover: '#5a67d8', darkDefault: '#a78bfa', darkHover: '#c4b5fd' }, // Purple
+            { default: '#f5576c', hover: '#e53e3e', darkDefault: '#fb7185', darkHover: '#fda4af' }, // Pink/Red
+            { default: '#4facfe', hover: '#3182ce', darkDefault: '#60a5fa', darkHover: '#93c5fd' }, // Blue
+            { default: '#43e97b', hover: '#38a169', darkDefault: '#34d399', darkHover: '#6ee7b7' }, // Green
+            { default: '#fa709a', hover: '#d69e2e', darkDefault: '#fbbf24', darkHover: '#fcd34d' }, // Pink/Yellow
+            { default: '#a8edea', hover: '#319795', darkDefault: '#22d3ee', darkHover: '#67e8f9' }, // Teal
+            { default: '#ff9a9e', hover: '#ed64a6', darkDefault: '#f472b6', darkHover: '#f9a8d4' }, // Light Pink
+            { default: '#a18cd1', hover: '#9f7aea', darkDefault: '#c084fc', darkHover: '#ddd6fe' }  // Purple/Pink
+          ];
+          
+          const colorIndex = index % colors.length;
+          const color = colors[colorIndex];
+          
+          // Check if dark mode
+          const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const defaultColor = isDarkMode ? color.darkDefault : color.default;
+          const hoverColor = isDarkMode ? color.darkHover : color.hover;
+          
+          button.className = `tab-button tab-color-${index} ${index === 0 ? 'active' : ''}`;
+          button.textContent = label;
+          button.setAttribute('data-tab-index', index.toString());
+          
+          // Apply inline styles for immediate effect
+          button.style.color = defaultColor;
+          button.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+          
+          // Add hover effects
+          button.addEventListener('mouseenter', () => {
+            if (!button.classList.contains('active')) {
+              button.style.color = hoverColor;
+              button.style.transform = 'translateY(-2px) scale(1.02)';
+            }
+          });
+          
+          button.addEventListener('mouseleave', () => {
+            if (!button.classList.contains('active')) {
+              button.style.color = defaultColor;
+              button.style.transform = '';
+            }
+          });
+          
+          button.addEventListener('click', () => {
+            // Remove active class from all buttons and tabs
+            container.querySelectorAll('.tab-button').forEach((b, bIndex) => {
+              b.classList.remove('active');
+              // Reset styles for non-active buttons
+              const bColorIndex = bIndex % colors.length;
+              const bColor = colors[bColorIndex];
+              const bDefaultColor = isDarkMode ? bColor.darkDefault : bColor.default;
+              b.style.color = bDefaultColor;
+              b.style.background = '';
+              b.style.boxShadow = '';
+              b.style.transform = '';
+            });
+            container.querySelectorAll('[data-tab-item]').forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked button and corresponding tab
+            button.classList.add('active');
+            item.classList.add('active');
+            
+            // Set active button with colored background and white text
+            button.style.color = 'white';
+            button.style.background = `linear-gradient(135deg, ${defaultColor}, ${hoverColor})`;
+            button.style.boxShadow = `0 4px 12px rgba(${parseInt(defaultColor.slice(1, 3), 16)}, ${parseInt(defaultColor.slice(3, 5), 16)}, ${parseInt(defaultColor.slice(5, 7), 16)}, 0.4)`;
+            button.style.transform = 'translateY(-3px) scale(1.05)';
+            
+            // Add copy buttons to the newly active tab content
+            setTimeout(() => {
+              addCopyButtons();
+            }, 100);
+          });
+          
+          tabButtonsContainer.appendChild(button);
+          
+          // Show first tab by default
+          if (index === 0) {
+            item.classList.add('active');
+            // Set first tab as active with colored background
+            button.style.color = 'white';
+            button.style.background = `linear-gradient(135deg, ${defaultColor}, ${hoverColor})`;
+            button.style.boxShadow = `0 4px 12px rgba(${parseInt(defaultColor.slice(1, 3), 16)}, ${parseInt(defaultColor.slice(3, 5), 16)}, ${parseInt(defaultColor.slice(5, 7), 16)}, 0.4)`;
+            button.style.transform = 'translateY(-3px) scale(1.05)';
+          }
+          
+          // Listen for dark mode changes
+          if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addListener(() => {
+              if (!button.classList.contains('active')) {
+                const newIsDarkMode = mediaQuery.matches;
+                const newDefaultColor = newIsDarkMode ? color.darkDefault : color.default;
+                button.style.color = newDefaultColor;
+              }
+            });
+          }
+        });
+        
+        // Add copy buttons to the initially active tab
+        setTimeout(() => {
+          addCopyButtons();
+        }, 100);
+      });
+    }
+
+    // Initialize tabs
+    document.addEventListener('DOMContentLoaded', initializeTabs);
+    document.addEventListener('astro:page-load', initializeTabs);
+    
+    if (document.readyState !== 'loading') {
+      setTimeout(initializeTabs, 100);
+    }
+  })();
+</script>
+
+<style>
+  .tab-container {
+    margin: 2rem 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .tab-buttons {
+    display: flex;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 6px;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    position: relative;
+  }
+
+  .tab-buttons::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(148, 163, 184, 0.3) 20%, 
+      rgba(148, 163, 184, 0.3) 80%, 
+      transparent 100%);
+  }
+
+  .tab-buttons::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-button {
+    position: relative;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+    text-transform: capitalize;
+    letter-spacing: 0.025em;
+    min-width: fit-content;
+    overflow: hidden;
+  }
+
+  .tab-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+    transform: scale(0.8);
+  }
+
+  .tab-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .tab-button:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .tab-button:hover::before {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+
+  .tab-button:hover::after {
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .tab-button.active {
+    color: white;
+    transform: translateY(-3px) scale(1.05);
+    font-weight: 700;
+  }
+
+  .tab-button.active::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .tab-button.active::after {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+
+  /* Color variations for different tabs */
+  .tab-button.tab-color-0::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  .tab-button.tab-color-1::before {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+  
+  .tab-button.tab-color-2::before {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+  
+  .tab-button.tab-color-3::before {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+  
+  .tab-button.tab-color-4::before {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+  
+  .tab-button.tab-color-5::before {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+  
+  .tab-button.tab-color-6::before {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  }
+  
+  .tab-button.tab-color-7::before {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+  }
+
+  /* Default text colors for each tab - maximum specificity to override inheritance */
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0:not(.active) {
+    color: #667eea !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1:not(.active) {
+    color: #f5576c !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2:not(.active) {
+    color: #4facfe !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3:not(.active) {
+    color: #43e97b !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4:not(.active) {
+    color: #fa709a !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5:not(.active) {
+    color: #a8edea !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6:not(.active) {
+    color: #ff9a9e !important;
+  }
+  
+  .tab-container[data-tabs] .tab-color-7,
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-7:not(.active) {
+    color: #a18cd1 !important;
+  }
+
+  /* Hover color variations - maximum specificity */
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0:hover {
+    color: #5a67d8 !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1:hover {
+    color: #e53e3e !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2:hover {
+    color: #3182ce !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3:hover {
+    color: #38a169 !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4:hover {
+    color: #d69e2e !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5:hover {
+    color: #319795 !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6:hover {
+    color: #ed64a6 !important;
+  }
+  
+  .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-7:hover {
+    color: #9f7aea !important;
+  }
+
+  .tab-content {
+    background: #ffffff;
+    position: relative;
+  }
+
+  :global([data-tab-item]) {
+    display: none;
+    padding: 2rem;
+    animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :global([data-tab-item].active) {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  :global([data-tab-item] pre) {
+    margin: 0;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border-radius: 12px;
+    overflow-x: auto;
+    border: 1px solid rgba(100, 116, 139, 0.15);
+    position: relative;
+    box-shadow: 
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  :global([data-tab-item] pre::before) {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%, 
+      rgba(102, 126, 234, 0.6) 25%, 
+      rgba(118, 75, 162, 0.6) 75%, 
+      transparent 100%);
+    border-radius: 12px 12px 0 0;
+  }
+
+  :global([data-tab-item] code) {
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  /* Language labels for code blocks */
+  :global([data-tab-item] pre[class*="language-"]) {
+    position: relative;
+  }
+
+  :global([data-tab-item] pre[class*="language-"]::after) {
+    content: attr(class);
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(100, 116, 139, 0.2);
+  }
+
+  /* Copy button styles for tab content */
+  :global([data-tab-item] .copy-btn) {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+  }
+
+  :global([data-tab-item] .copy-btn:hover) {
+    background: #0056b3;
+  }
+
+  :global([data-tab-item] .copy-btn.copied) {
+    background: #28a745;
+  }
+
+  /* Dark theme support */
+  @media (prefers-color-scheme: dark) {
+    .tab-container {
+      background: #111827;
+      border-color: rgba(75, 85, 99, 0.3);
+      box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.3),
+        0 10px 10px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-buttons {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+
+    .tab-buttons::before {
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(75, 85, 99, 0.4) 20%, 
+        rgba(75, 85, 99, 0.4) 80%, 
+        transparent 100%);
+    }
+
+    /* Dark mode default text colors for each tab - maximum specificity */
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0:not(.active) {
+      color: #a78bfa !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1:not(.active) {
+      color: #fb7185 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2:not(.active) {
+      color: #60a5fa !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3:not(.active) {
+      color: #34d399 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4:not(.active) {
+      color: #fbbf24 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5:not(.active) {
+      color: #22d3ee !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6:not(.active) {
+      color: #f472b6 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-7,
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-7:not(.active) {
+      color: #c084fc !important;
+    }
+
+    .tab-button::after {
+      background: rgba(31, 41, 55, 0.9);
+      box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.3),
+        0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dark mode hover colors - maximum specificity */
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-0:hover {
+      color: #c4b5fd !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-1:hover {
+      color: #fda4af !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-2:hover {
+      color: #93c5fd !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-3:hover {
+      color: #6ee7b7 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-4:hover {
+      color: #fcd34d !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-5:hover {
+      color: #67e8f9 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-6:hover {
+      color: #f9a8d4 !important;
+    }
+    
+    .tab-container[data-tabs] .tab-buttons .tab-button.tab-color-7:hover {
+      color: #ddd6fe !important;
+    }
+
+    .tab-button:hover::after {
+      box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Dark mode color variations */
+    .tab-button.tab-color-0.active::before {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    }
+    
+    .tab-button.tab-color-1.active::before {
+      background: linear-gradient(135deg, #f472b6 0%, #ef4444 100%);
+    }
+    
+    .tab-button.tab-color-2.active::before {
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+    }
+    
+    .tab-button.tab-color-3.active::before {
+      background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+    }
+    
+    .tab-button.tab-color-4.active::before {
+      background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+    }
+    
+    .tab-button.tab-color-5.active::before {
+      background: linear-gradient(135deg, #06b6d4 0%, #f472b6 100%);
+    }
+    
+    .tab-button.tab-color-6.active::before {
+      background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+    }
+    
+    .tab-button.tab-color-7.active::before {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    }
+
+
+    .tab-content {
+      background: #111827;
+    }
+
+    :global([data-tab-item] pre) {
+      background: linear-gradient(135deg, #0f172a 0%, #020617 100%) !important;
+      border-color: rgba(75, 85, 99, 0.3);
+    }
+
+    :global([data-tab-item] pre::before) {
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(99, 102, 241, 0.6) 25%, 
+        rgba(139, 92, 246, 0.6) 75%, 
+        transparent 100%);
+    }
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .tab-container {
+      margin: 1.5rem -1rem;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    
+    .tab-buttons {
+      padding: 4px;
+      gap: 2px;
+    }
+
+    .tab-button {
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      min-width: auto;
+    }
+
+    :global([data-tab-item]) {
+      padding: 1.25rem;
+    }
+  }
+</style>

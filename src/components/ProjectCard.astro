@@ -1,0 +1,210 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  tags: string[];
+  link?: string;
+  github?: string;
+  carousel?: Array<{img: string; description: string}>;
+}
+
+const { title, description, image = 'https://images.pexels.com/photos/270348/pexels-photo-270348.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', tags, link, github, carousel } = Astro.props;
+const carouselId = `carousel-${title.replace(/\s+/g, '-').toLowerCase()}`;
+---
+
+<article class="group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 flex flex-col h-full">
+  <div class="relative overflow-hidden">
+    {carousel && carousel.length > 0 ? (
+      <!-- Carousel -->
+      <div class="carousel-container relative h-48">
+        <div class="carousel-slides flex h-full transition-transform duration-1000 ease-in-out" id={carouselId}>
+          {carousel.map((slide, index) => (
+            <div class="carousel-slide w-full h-full flex-shrink-0 relative">
+              <img 
+                src={slide.img} 
+                alt={slide.description} 
+                class="w-full h-full object-contain bg-gray-100 dark:bg-gray-700"
+              />
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                <p class="text-white text-sm font-medium">{slide.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <!-- Carousel Navigation -->
+        <div class="absolute top-2 right-2 flex gap-1 z-10">
+          {carousel.map((_, index) => (
+            <button 
+              class="carousel-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white/80 transition-colors"
+              data-slide={index}
+              data-carousel-id={carouselId}
+            ></button>
+          ))}
+        </div>
+        
+        <!-- Previous/Next Buttons -->
+        <button 
+          class="carousel-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors z-10"
+          data-carousel-id={carouselId}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <button 
+          class="carousel-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors z-10"
+          data-carousel-id={carouselId}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    ) : (
+      <!-- Single Image -->
+      <img 
+        src={image} 
+        alt={title} 
+        class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  </div>
+  
+  <div class="p-6 flex-grow">
+    <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{title}</h3>
+    <p class="text-gray-600 dark:text-gray-300 mb-4">{description}</p>
+    
+    <div class="flex flex-wrap gap-2 mb-4">
+      {tags.map(tag => (
+        <span class="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs px-2.5 py-0.5 rounded-full">
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+  
+  <div class="px-6 pb-6 mt-auto flex gap-3">
+    {link && (
+      <a 
+        href={link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="flex-1 bg-primary-600 text-white text-center py-2 px-4 rounded-md hover:bg-primary-700 transition-colors text-sm font-medium"
+      >
+        Live Demo
+      </a>
+    )}
+    {github && (
+      <a 
+        href={github} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="flex-1 bg-gray-600 text-white text-center py-2 px-4 rounded-md hover:bg-gray-700 transition-colors text-sm font-medium"
+      >
+        GitHub
+      </a>
+    )}
+  </div>
+</article>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    // Initialize carousels
+    const carousels = document.querySelectorAll('.carousel-container');
+    
+    carousels.forEach((carousel, index) => {
+      const slides = carousel.querySelector('.carousel-slides');
+      const dots = carousel.querySelectorAll('.carousel-dot');
+      const prevBtn = carousel.querySelector('.carousel-prev');
+      const nextBtn = carousel.querySelector('.carousel-next');
+      
+      if (!slides || dots.length === 0) return;
+      
+      let currentSlide = 0;
+      const totalSlides = dots.length;
+      let autoPlayInterval;
+      
+      // Update carousel position
+      function updateCarousel() {
+        slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Update dots
+        dots.forEach((dot, index) => {
+          if (index === currentSlide) {
+            dot.classList.add('bg-white');
+            dot.classList.remove('bg-white/50');
+          } else {
+            dot.classList.remove('bg-white');
+            dot.classList.add('bg-white/50');
+          }
+        });
+      }
+      
+      // Next slide
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+      }
+      
+      // Previous slide
+      function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateCarousel();
+      }
+      
+      // Go to specific slide
+      function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+      }
+      
+      // Start auto-play
+      function startAutoPlay() {
+        autoPlayInterval = setInterval(nextSlide, 5000);
+      }
+      
+      // Stop auto-play
+      function stopAutoPlay() {
+        if (autoPlayInterval) {
+          clearInterval(autoPlayInterval);
+        }
+      }
+      
+      // Event listeners
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          nextSlide();
+          stopAutoPlay();
+          startAutoPlay();
+        });
+      }
+      
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          prevSlide();
+          stopAutoPlay();
+          startAutoPlay();
+        });
+      }
+      
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          goToSlide(index);
+          stopAutoPlay();
+          startAutoPlay();
+        });
+      });
+      
+      // Pause auto-play on hover
+      carousel.addEventListener('mouseenter', stopAutoPlay);
+      carousel.addEventListener('mouseleave', startAutoPlay);
+      
+      // Initialize first slide and start auto-play
+      updateCarousel();
+      startAutoPlay();
+    });
+  });
+</script>

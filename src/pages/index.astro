@@ -1,0 +1,278 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import BlogPostCard from '../components/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get featured projects (limit to 3)
+const allProjects = await getCollection('projects', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+const featuredProjects = allProjects
+  .filter(project => project.data.featured)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Get latest blog posts (limit to 3)
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+const latestPosts = posts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Skills section data
+const skills = [
+  { category: 'Frontend', items: ['HTML/CSS', 'JavaScript', 'TypeScript', 'React', 'Tailwind CSS'] },
+  { category: 'Backend', items: ['Node.js', 'Express', 'Python', 'Django', 'API Design'] },
+  { category: 'Other', items: ['Git', 'CI/CD', 'Docker', 'AWS', 'UI/UX Design'] },
+];
+---
+
+<Layout title="Kartik kalia - Portfolio & Blog">
+  <Hero />
+  
+  <!-- About Section -->
+  <section class="py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
+          <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">Full-Stack Developer</h3>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+              I'm a passionate full-stack developer with expertise in modern web technologies. 
+              I love building scalable applications and solving complex problems through clean, 
+              maintainable code.
+            </p>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+              With experience in both frontend and backend development, I create seamless 
+              user experiences and robust server-side solutions. I'm always learning and 
+              exploring new technologies to stay current with industry best practices.
+            </p>
+            <a 
+              href="/about" 
+              class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors"
+            >
+              Learn More
+              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </a>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            {skills.map(skill => (
+              <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+                <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{skill.category}</h4>
+                <div class="flex flex-wrap gap-2">
+                  {skill.items.map(item => (
+                    <span class="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs px-2.5 py-1 rounded-full">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section -->
+  <section class="py-16 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Featured Projects</h2>
+        <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+        <p class="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          Check out some of my recent work. These projects showcase my skills and approach to solving problems.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {featuredProjects.length > 0 ? (
+          featuredProjects.map(project => (
+            <ProjectCard
+              title={project.data.title}
+              description={project.data.description}
+              image={project.data.image}
+              tags={project.data.tags}
+              link={project.data.link}
+              github={project.data.github}
+              carousel={project.data.carousel}
+            />
+          ))
+        ) : (
+          [1, 2, 3].map(i => (
+            <ProjectCard
+              title={`Project ${i}`}
+              description="This is a sample project description. Replace this with your actual project details once you have created some projects."
+              tags={['Sample', 'Project']}
+              link="#"
+              github="#"
+            />
+          ))
+        )}
+      </div>
+      
+      <div class="text-center mt-12">
+        <a 
+          href="/portfolio" 
+          class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors"
+        >
+          View All Projects
+          <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+          </div>
+    </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">What Colleagues Say</h2>
+        <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+        <p class="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          Here's what my colleagues and clients have to say about working with me.
+        </p>
+      </div>
+      
+      <div class="max-w-6xl mx-auto">
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <li class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+            <div class="flex items-start space-x-4">
+              <img src="/reviews/linkedin/1682076136339.jpeg" alt="Munish Shukla" class="w-16 h-16 rounded-full object-cover flex-shrink-0">
+              <div class="flex-1">
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <strong class="text-gray-900 dark:text-white">Munish Shukla</strong> I had the pleasure of working closely with Kartik Kalia for a significant duration during their time as a Full Stack Developer in our team. Kartik's dedication, enthusiasm, and aptitude for development were truly commendable.
+
+                  Throughout our collaboration, Kartik consistently exhibited a strong grasp of both frontend and backend technologies, demonstrating versatility in their skill set. Their ability to quickly understand complex concepts and translate them into practical solutions was impressive. Whether it was tackling intricate coding challenges or contributing creatively to UI/UX discussions, Kartik's insights were invaluable.
+                  
+                  Best wishes for your future endeavors, Kartik!
+                </p>
+              </div>
+            </div>
+          </li>
+          
+          <li class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+            <div class="flex items-start space-x-4">
+              <img src="/reviews/linkedin/1727286305977.jpeg" alt="Ashish Rawat" class="w-16 h-16 rounded-full object-cover flex-shrink-0">
+              <div class="flex-1">
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <strong class="text-gray-900 dark:text-white">Amit Chakraborty</strong> I have been working with Kartik for almost two years. He is a good backend developer, good mentor, great lead and good supporting team member. Working with him gave me a lot of backend learning opportunities, and also as a team we solved a lot of problems. As a person and as a team he is very responsible and anyone can rely on him without hesitation.
+                </p>
+              </div>
+            </div>
+          </li>
+          
+          <li class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+            <div class="flex items-start space-x-4">
+              <img src="/reviews/linkedin/1630477467475.jpeg" alt="Ashish Rawat" class="w-16 h-16 rounded-full object-cover flex-shrink-0">
+              <div class="flex-1">
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <strong class="text-gray-900 dark:text-white">Ashish Rawat</strong> Well I used to work with Kartik and i have to say he is one of those go to tech wizard if you get stuck somewhere while solving a problem. He is always there to help the team members around and also other people as well.
+                </p>
+              </div>
+            </div>
+          </li>
+          
+          <li class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+            <div class="flex items-start space-x-4">
+              <img src="/reviews/linkedin/1679238801521.jpeg" alt="Mitendra Nathani" class="w-16 h-16 rounded-full object-cover flex-shrink-0">
+              <div class="flex-1">
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  <strong class="text-gray-900 dark:text-white">Mitendra Nathani</strong> Kartik's expertise in Node.js programming has been instrumental in delivering high-quality and efficient solutions for our projects. He consistently demonstrate a deep understanding of the technology, ensuring our applications are well-structured, scalable, and performant. I have full confidence in his abilities to continue delivering excellent results in future projects.
+                </p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Blog Posts Section -->
+  <section class="py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Latest Blog Posts</h2>
+        <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+        <p class="text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          Read my latest thoughts on web development, technology, and industry insights.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {latestPosts.length > 0 ? (
+          latestPosts.map(post => (
+            <BlogPostCard
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              heroImage={post.data.heroImage}
+              tags={post.data.tags}
+              url={post.url}
+              author={post.data.author}
+            />
+          ))
+        ) : (
+          [1, 2, 3].map(i => (
+            <BlogPostCard
+              title={`Sample Blog Post ${i}`}
+              description="This is a sample blog post description. Replace this with your actual blog posts once you have created some content."
+              pubDate={new Date()}
+              tags={['Sample', 'Blog']}
+              url="#"
+              author="Your Name"
+            />
+          ))
+        )}
+      </div>
+      
+      <div class="text-center mt-12">
+        <a 
+          href="/blog" 
+          class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors"
+        >
+          Read All Posts
+          <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA Section -->
+  <section class="py-16 bg-white dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Let's Work Together</h2>
+        <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-8">
+          I'm always interested in new opportunities and exciting projects. 
+          Whether you have a question or just want to say hi, feel free to reach out!
+        </p>
+        <a 
+          href="/contact" 
+          class="inline-flex items-center px-8 py-4 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 transition-colors text-lg"
+        >
+          Get In Touch
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

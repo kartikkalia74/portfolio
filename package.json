@@ -1,0 +1,25 @@
+{
+  "name": "portfolio-blog",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "s3configure": "./private/s3configure.sh",
+    "deploy": "npm run s3configure && npm run build && aws s3 sync dist s3://portfolio-code1  --delete && aws cloudfront create-invalidation --distribution-id EADYOAQ5C7IZY --paths '/*'"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/sitemap": "^3.0.4",
+    "@astrojs/tailwind": "^5.0.3",
+    "astro": "^5.2.5",
+    "rehype-pretty-code": "^0.14.1",
+    "tailwindcss": "^3.3.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}

@@ -1,0 +1,60 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  heroImage?: string;
+  tags: string[];
+  url: string;
+  author: string;
+}
+
+const { title, description, pubDate, heroImage = 'https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2', tags, url, author } = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-us', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<article class="group bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
+  <a href={url} class="block">
+    <div class="relative overflow-hidden">
+      <img 
+        src={heroImage} 
+        alt={title} 
+        class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+  </a>
+  
+  <div class="p-6">
+    <div class="flex flex-wrap gap-2 mb-3">
+      {tags.slice(0, 3).map(tag => (
+        <a href={`/blog/tag/${tag}`} class="text-xs px-2.5 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-800/30 transition-colors">
+          {tag}
+        </a>
+      ))}
+    </div>
+    
+    <a href={url} class="block group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+      <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{title}</h3>
+    </a>
+    
+    <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">{description}</p>
+    
+    <div class="flex items-center justify-between mt-6">
+      <div class="flex items-center">
+        <div class="w-8 h-8 rounded-full bg-primary-200 dark:bg-primary-800 flex items-center justify-center text-primary-700 dark:text-primary-300 font-medium">
+          {author.charAt(0)}
+        </div>
+        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{author}</span>
+      </div>
+      <time datetime={pubDate.toISOString()} class="text-sm text-gray-500 dark:text-gray-400">
+        {formattedDate}
+      </time>
+    </div>
+  </div>
+</article>

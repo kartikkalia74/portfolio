@@ -1,0 +1,249 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Timeline data
+const experiences = [
+  {
+    period: '2021 - 2024',
+    title: 'Senior Frontend Developer',
+    company: 'Nonceblox',
+    description: 'Leading the front-end development team, architecting new features, and improving performance for a SaaS platform with over 50,000 users.',
+    technologies: ['React', 'TypeScript', 'Redux', 'GraphQL', 'Tailwind CSS']
+  },
+  {
+    period: '2020 - 2023',
+    title: 'Full Stack Developer',
+    company: 'Mysence Technologies',
+    description: 'Developed and maintained various client projects, implementing both front-end interfaces and back-end APIs.',
+    technologies: ['React', 'Node.js', 'Express', 'MongoDB', 'AWS']
+  },
+  {
+    period: '2018 - 2020',
+    title: 'Junior Developer',
+    company: 'Apptunix',
+    description: "Worked on the company's main product, a project management tool for startups.",
+    technologies: ['JavaScript', 'Vue.js', 'Firebase', 'CSS']
+  }
+];
+
+// Education data
+const education = [
+  {
+    period: '2016 - 2018',
+    degree: 'Master of Science in Computer Science',
+    institution: 'Punjab University',
+    description: 'Specialized in Human-Computer Interaction and Software Engineering.'
+  },
+  {
+    period: '2012 - 2016',
+    degree: 'Bachelor of Science in Computer Science',
+    institution: 'Punjab University',
+    description: 'Graduated with honors. Active member of the Web Development Club.'
+  }
+];
+
+const skills = {
+  backendDevelopment: ['Node.js', 'NestJS', 'Socket.io', 'GraphQL'],
+  databaseDevOps: ['MongoDB', 'PostgreSQL', 'AWS', 'Jenkins', 'GitHub Actions'],
+  toolsMethods: ['Git', 'Docker', 'CI/CD', 'Agile', 'TDD']
+};
+
+const interests = [
+  'Coding',
+  'Reading',
+  'Traveling',
+  'Photography',
+  'Agriculture',
+  'Foodie'
+];
+
+const personalInfo = {
+  name: 'Kartik Kalia',
+  email: 'kartikkalia74@gmail.com',
+  profileImage: 'https://portfolio-my.s3.ap-south-1.amazonaws.com/about/image+(10).png',
+  bio: "Hello! I'm a passionate full-stack developer with expertise in backend development, DevOps, and building scalable applications. I enjoy solving complex problems and creating solutions that make a difference.",
+  socialLinks: {
+    linkedin: 'https://www.linkedin.com/in/kartikkalia-0k0k/',
+    github: 'https://github.com/kartikkalia74',
+    twitter: 'https://x.com/kartikkalia74'
+  }
+};
+
+const story = [
+  "I began my journey in web development during college, where I built websites for student organizations and local businesses. After graduating with a degree in Computer Science, I joined a tech startup as a front-end developer, where I honed my skills in React and modern JavaScript.",
+  "Over the years, I've expanded my expertise to include back-end development, working with Node.js, Express, and various databases. I believe in writing clean, maintainable code and creating intuitive user experiences.",
+  "When I'm not coding, you can find me hiking in the mountains, reading science fiction, or experimenting with new cooking recipes."
+];
+---
+
+<Layout title="About Me - Kartik Kalia" description="Learn more about Kartik Kalia, a full-stack developer specializing in backend, DevOps, and scalable applications.">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <!-- Header -->
+    <header class="max-w-3xl mx-auto text-center mb-16">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">About Me</h1>
+      <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+      <p class="text-xl text-gray-700 dark:text-gray-300">
+        Get to know my background, skills, and journey as a developer.
+      </p>
+    </header>
+    
+    <!-- Main content -->
+    <div class="max-w-4xl mx-auto">
+      <!-- Bio section -->
+      <section class="mb-16">
+        <div class="flex flex-col md:flex-row gap-12 items-center">
+          <div class="md:w-1/3">
+            <img 
+              src={personalInfo.profileImage} 
+              alt={personalInfo.name} 
+              class="rounded-lg shadow-xl w-full max-w-xs mx-auto"
+            />
+          </div>
+          <div class="md:w-2/3">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Who I Am</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+              {personalInfo.bio}
+            </p>
+            {story.map(paragraph => (
+              <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">{paragraph}</p>
+            ))}
+            <div class="flex gap-4 mt-4">
+              <a href={personalInfo.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <img src="/icons/linkedin.svg" alt="LinkedIn" class="h-6 w-6" />
+              </a>
+              <a href={personalInfo.socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <img src="/icons/github.svg" alt="GitHub" class="h-6 w-6" />
+              </a>
+              <a href={personalInfo.socialLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                <img src="/icons/twitter.svg" alt="Twitter" class="h-6 w-6" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Skills section -->
+      <section class="mb-16 bg-gray-50 dark:bg-gray-800/50 p-8 rounded-lg">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">My Skills</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Backend Development</h3>
+            <ul class="space-y-2">
+              {skills.backendDevelopment.map(skill => (
+                <li class="flex items-center text-gray-700 dark:text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Database & DevOps</h3>
+            <ul class="space-y-2">
+              {skills.databaseDevOps.map(skill => (
+                <li class="flex items-center text-gray-700 dark:text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Tools & Methods</h3>
+            <ul class="space-y-2">
+              {skills.toolsMethods.map(skill => (
+                <li class="flex items-center text-gray-700 dark:text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Experience & Education -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <!-- Experience Timeline -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Work Experience</h2>
+          <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-1/2 before:h-full before:w-0.5 before:bg-gray-200 dark:before:bg-gray-700">
+            {experiences.map((job, index) => (
+              <div class="relative pl-8">
+                <div class="absolute left-0 top-1 h-5 w-5 rounded-full border-4 border-primary-500 bg-white dark:bg-gray-900"></div>
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+                  <span class="text-sm font-medium text-primary-600 dark:text-primary-400 block mb-1">{job.period}</span>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{job.title}</h3>
+                  <p class="text-gray-600 dark:text-gray-400 mb-2">{job.company}</p>
+                  <p class="text-gray-700 dark:text-gray-300">{job.description}</p>
+                  {job.technologies && (
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      {job.technologies.map(tech => (
+                        <span class="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs px-2.5 py-0.5 rounded-full">{tech}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        <!-- Education Timeline -->
+        <section>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Education</h2>
+          <div class="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-1/2 before:h-full before:w-0.5 before:bg-gray-200 dark:before:bg-gray-700">
+            {education.map((edu, index) => (
+              <div class="relative pl-8">
+                <div class="absolute left-0 top-1 h-5 w-5 rounded-full border-4 border-secondary-500 bg-white dark:bg-gray-900"></div>
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+                  <span class="text-sm font-medium text-secondary-600 dark:text-secondary-400 block mb-1">{edu.period}</span>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{edu.degree}</h3>
+                  <p class="text-gray-600 dark:text-gray-400 mb-2">{edu.institution}</p>
+                  <p class="text-gray-700 dark:text-gray-300">{edu.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+      <!-- Personal interests -->
+      <section class="mt-16">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Interests</h2>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+          <ul class="flex flex-wrap gap-3">
+            {interests.map(interest => (
+              <li class="px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium">{interest}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <!-- Call to action -->
+      <section class="mt-16 text-center">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Let's Work Together</h2>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          Interested in collaborating or want to learn more about my work? I'm always open to discussing new projects and opportunities.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/portfolio" 
+            class="px-6 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-white border border-gray-300 dark:border-gray-700 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300"
+          >
+            View My Work
+          </a>
+          <a 
+            href="/contact" 
+            class="px-6 py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium transition-all duration-300"
+          >
+            Get in Touch
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>

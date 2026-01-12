@@ -1,0 +1,369 @@
+---
+title: "OpenAI Chat Completion API Tutorial: Complete Guide with Code Examples"
+description: "Learn how to use OpenAI's Chat Completion API with step-by-step setup instructions and code examples in Python, Node.js, Java, and cURL."
+pubDate: 2025-07-19
+author: "Kartik kalia"
+heroImage: "/blogs/openai-chat-completion-api-tutorial/thumbnail.png"
+tags: ["openai", "chatgpt", "api", "python", "nodejs", "java", "ai", "tutorial"]
+---
+
+import Tabs from '../../components/Tabs.astro';
+import TabItem from '../../components/TabItem.astro';
+
+OpenAI's Chat Completion API is one of the most powerful conversational AI tools available to developers. Whether you're building a chatbot, content generator, or AI assistant, this API provides the foundation for creating intelligent applications.
+
+In this comprehensive tutorial, we'll walk through everything you need to know to get started with the OpenAI Chat Completion API.
+
+---
+
+## 1. Account Setup and API Key Generation
+
+### Step 1: Create an OpenAI Account
+
+First, you'll need to set up an OpenAI account:
+
+1. Visit [OpenAI Platform](https://platform.openai.com)
+2. Click **Sign up** and create your account
+3. Verify your email address
+4. Complete phone verification
+
+### Step 2: Add Payment Method
+
+The Chat Completion API is a paid service:
+
+1. Navigate to [Billing](https://platform.openai.com/account/billing/overview)
+2. Click **Add payment method**
+3. Enter your payment details
+4. Set usage limits to control costs (recommended)
+
+**Note**: You can skip this step initially and use the free credits provided to new accounts for testing. However, you'll need to add a payment method for continued usage.
+
+### Step 3: Generate Your API Key
+
+Your API key authenticates your requests:
+
+1. Go to [API Keys](https://platform.openai.com/account/api-keys)
+2. Click **Create new secret key**
+3. Give it a descriptive name
+4. **Copy and securely store your API key**
+5. **Never share or commit API keys to version control**
+
+---
+
+## 2. Understanding the Chat Completion API
+
+### API Endpoint
+```
+POST https://api.openai.com/v1/chat/completions
+```
+
+### Authentication
+All requests require an Authorization header:
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+---
+
+## 3. Code Examples
+
+<Tabs>
+  <TabItem label="Python">
+    First, install the OpenAI library:
+    ```bash
+    pip install openai
+    ```
+
+    ```python
+    import openai
+    import os
+
+    # Set your API key (store in environment variable)
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    def chat_completion(user_message):
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant that provides clear and concise answers."
+                    },
+                    {
+                        "role": "user",
+                        "content": user_message
+                    }
+                ],
+                temperature=0.7,
+                max_tokens=150
+            )
+            
+            return response.choices[0].message.content
+            
+        except openai.error.OpenAIError as e:
+            print(f"OpenAI API error: {e}")
+            return None
+
+    # Example usage
+    result = chat_completion("Explain quantum computing in simple terms")
+    print(result)
+    ```
+  </TabItem>
+  
+  <TabItem label="Node.js">
+    Install the OpenAI SDK:
+    ```bash
+    npm install openai
+    ```
+
+    ```javascript
+    const { Configuration, OpenAIApi } = require("openai");
+
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+    const openai = new OpenAIApi(configuration);
+
+    async function chatCompletion(userMessage) {
+      try {
+        const response = await openai.createChatCompletion({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful assistant that provides clear and concise answers."
+            },
+            {
+              role: "user",
+              content: userMessage
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 150,
+        });
+        
+        return response.data.choices[0].message.content;
+      } catch (error) {
+        console.error('OpenAI API error:', error.response?.data || error.message);
+        return null;
+      }
+    }
+
+    // Example usage
+    chatCompletion("Explain quantum computing in simple terms")
+      .then(result => console.log(result))
+      .catch(error => console.error(error));
+    ```
+  </TabItem>
+  
+  <TabItem label="Java">
+    Add the necessary dependencies to your `pom.xml`:
+    ```xml
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.15.2</version>
+    </dependency>
+    ```
+
+    ```java
+    import com.fasterxml.jackson.databind.ObjectMapper;
+    import com.fasterxml.jackson.databind.node.ArrayNode;
+    import com.fasterxml.jackson.databind.node.ObjectNode;
+    import java.io.IOException;
+    import java.net.URI;
+    import java.net.http.HttpClient;
+    import java.net.http.HttpRequest;
+    import java.net.http.HttpResponse;
+
+    public class OpenAIChatCompletion {
+        private static final String API_URL = "https://api.openai.com/v1/chat/completions";
+        private static final String API_KEY = System.getenv("OPENAI_API_KEY");
+        
+        public static String chatCompletion(String userMessage) throws IOException, InterruptedException {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode requestBody = mapper.createObjectNode();
+            
+            // Set request parameters
+            requestBody.put("model", "gpt-4o-mini");
+            requestBody.put("temperature", 0.7);
+            requestBody.put("max_tokens", 150);
+            
+            // Create messages array
+            ArrayNode messages = mapper.createArrayNode();
+            
+            // System message
+            ObjectNode systemMessage = mapper.createObjectNode();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", "You are a helpful assistant that provides clear and concise answers.");
+            messages.add(systemMessage);
+            
+            // User message
+            ObjectNode userMessageObj = mapper.createObjectNode();
+            userMessageObj.put("role", "user");
+            userMessageObj.put("content", userMessage);
+            messages.add(userMessageObj);
+            
+            requestBody.set("messages", messages);
+            
+            // Create HTTP request
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(API_URL))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + API_KEY)
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(requestBody)))
+                    .build();
+            
+            // Send request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            
+            if (response.statusCode() == 200) {
+                return response.body();
+            } else {
+                throw new RuntimeException("API request failed: " + response.statusCode());
+            }
+        }
+        
+        public static void main(String[] args) {
+            try {
+                String result = chatCompletion("Explain quantum computing in simple terms");
+                System.out.println(result);
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+    }
+    ```
+  </TabItem>
+  
+  <TabItem label="cURL">
+    ```bash
+    curl https://api.openai.com/v1/chat/completions \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -d '{
+        "model": "gpt-4o-mini",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a helpful assistant that provides clear and concise answers."
+          },
+          {
+            "role": "user",
+            "content": "Explain quantum computing in simple terms"
+          }
+        ],
+        "temperature": 0.7,
+        "max_tokens": 150
+      }'
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## 4. API Parameters Explained
+
+### model
+Specifies which AI model to use:
+- **`gpt-4o-mini`**: Fast, cost-effective, recommended for beginners and most applications
+- **`gpt-3.5-turbo`**: Fast and affordable (being phased out)
+- **`gpt-4`**: More capable but slower and more expensive
+- **`gpt-4-turbo`**: Latest GPT-4 with improved performance
+
+### messages
+An array of message objects representing the conversation. Each message has:
+
+#### role
+- **`system`**: Sets the assistant's behavior and instructions
+  - Example: `"You are a helpful coding assistant"`
+  - Usually the first message to establish context
+
+- **`user`**: Messages from the human user
+  - Example: `"How do I reverse a string in Python?"`
+  - These are your actual questions or prompts
+
+- **`assistant`**: Previous AI responses (for conversation history)
+  - Example: `"You can use string slicing: text[::-1]"`
+  - Include these to maintain context in longer conversations
+
+#### Example conversation structure:
+```json
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful programming tutor."
+    },
+    {
+      "role": "user",
+      "content": "How do I reverse a string in Python?"
+    },
+    {
+      "role": "assistant",
+      "content": "You can reverse a string using slicing: my_string[::-1]"
+    },
+    {
+      "role": "user",
+      "content": "Can you show me a complete example?"
+    }
+  ]
+}
+```
+
+### temperature
+Controls the randomness and creativity of responses:
+- **`0.0`**: Deterministic, focused responses (best for factual queries)
+- **`0.3`**: Slightly varied but consistent
+- **`0.7`**: Balanced creativity and coherence (recommended default)
+- **`1.0`**: More creative and varied responses
+- **`2.0`**: Highly creative but potentially less coherent
+
+**Use cases:**
+- Code generation: `0.0 - 0.3`
+- General conversation: `0.5 - 0.8`
+- Creative writing: `0.8 - 1.5`
+
+### max_tokens
+Maximum number of tokens in the response:
+- 1 token ≈ 0.75 words in English
+- Examples:
+  - `50` tokens ≈ 35-40 words
+  - `150` tokens ≈ 100-120 words
+  - `500` tokens ≈ 350-400 words
+
+### Additional Parameters
+
+**top_p**: Alternative to temperature (0.0 - 1.0)
+**frequency_penalty**: Reduces repetition (-2.0 to 2.0)
+**presence_penalty**: Encourages new topics (-2.0 to 2.0)
+
+---
+
+## 5. Common Use Cases
+
+- **Customer Support**: Automated responses to common questions
+- **Content Creation**: Blog posts, emails, product descriptions
+- **Code Assistance**: Code review, debugging help, documentation
+- **Education**: Tutoring, explanations, quiz generation
+- **Creative Writing**: Story generation, editing assistance
+
+---
+
+## Summary
+
+The OpenAI Chat Completion API opens up powerful possibilities for adding conversational AI to your applications. Key takeaways:
+
+1. **Start simple**: Use `gpt-4o-mini` with basic parameters
+2. **Understand roles**: Use system messages to set behavior, user messages for queries
+3. **Control creativity**: Adjust temperature based on your use case
+4. **Store API keys safely**: Use environment variables and never expose them
+5. **Monitor costs**: Set limits and choose appropriate models
+
+With these fundamentals, you're ready to build intelligent, conversational applications using OpenAI's powerful API.
+
+---
+
+*Ready to build something amazing? Check out the [OpenAI documentation](https://platform.openai.com/docs) for advanced features and updates.*

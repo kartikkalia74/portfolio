@@ -1,0 +1,279 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogPostCard from '../../components/BlogPostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+// Sort posts by date (newest first)
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get all unique tags
+const allTags = [...new Set(sortedPosts.flatMap(post => post.data.tags))].sort();
+
+// Sample posts (use these if no posts exist yet)
+const samplePosts = [
+  {
+    title: "Getting Started with Astro: Building Fast Websites",
+    description: "Learn how to build lightning-fast websites with Astro, a modern static site generator that delivers excellent performance by default.",
+    pubDate: new Date("2023-05-15"),
+    heroImage: "https://images.pexels.com/photos/2608353/pexels-photo-2608353.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["Astro", "Web Development", "Performance"],
+    author: "Kartik kalia",
+    slug: "getting-started-with-astro"
+  },
+  {
+    title: "Mastering Tailwind CSS: Tips and Tricks",
+    description: "Discover advanced techniques and best practices for using Tailwind CSS to create beautiful, responsive user interfaces.",
+    pubDate: new Date("2023-04-22"),
+    heroImage: "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["Tailwind CSS", "CSS", "Design"],
+    author: "Kartik kalia",
+    slug: "mastering-tailwind-css"
+  },
+  {
+    title: "Building a Portfolio Website That Stands Out",
+    description: "Learn how to create a portfolio website that showcases your skills and projects effectively to potential clients and employers.",
+    pubDate: new Date("2023-03-10"),
+    heroImage: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["Portfolio", "Web Design", "Career"],
+    author: "Kartik kalia",
+    slug: "building-a-portfolio-website"
+  },
+  {
+    title: "Introduction to TypeScript for JavaScript Developers",
+    description: "A beginner-friendly guide to TypeScript, explaining how it enhances JavaScript with static typing and other features.",
+    pubDate: new Date("2023-02-18"),
+    heroImage: "https://images.pexels.com/photos/7014337/pexels-photo-7014337.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["TypeScript", "JavaScript", "Programming"],
+    author: "Kartik kalia",
+    slug: "introduction-to-typescript"
+  },
+  {
+    title: "Responsive Design Best Practices in 2023",
+    description: "Explore the latest best practices for creating responsive websites that provide excellent user experiences across all devices.",
+    pubDate: new Date("2023-01-25"),
+    heroImage: "https://images.pexels.com/photos/1779487/pexels-photo-1779487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["Responsive Design", "CSS", "Web Development"],
+    author: "Kartik kalia",
+    slug: "responsive-design-best-practices"
+  },
+  {
+    title: "The Future of Web Development: Trends to Watch",
+    description: "An analysis of emerging trends and technologies that are shaping the future of web development.",
+    pubDate: new Date("2022-12-12"),
+    heroImage: "https://images.pexels.com/photos/97077/pexels-photo-97077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    tags: ["Web Development", "Trends", "Future Tech"],
+    author: "Kartik kalia",
+    slug: "future-of-web-development"
+  }
+];
+
+// Use sample posts if no real posts exist
+const displayPosts = sortedPosts.length > 0 ? sortedPosts : samplePosts;
+---
+
+<Layout title="Blog - Articles and Insights" description="Read my latest articles about web development, design, and technology.">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <!-- Header -->
+    <header class="max-w-3xl mx-auto text-center mb-16">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
+      <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
+      <p class="text-xl text-gray-700 dark:text-gray-300">
+        Thoughts, tutorials, and insights about web development and design.
+      </p>
+    </header>
+    
+    <div class="max-w-6xl mx-auto">
+      <!-- Featured Post (first post) -->
+      {displayPosts.length > 0 && (
+        <div class="mb-16 blog-post-card" data-tags={displayPosts[0].data ? displayPosts[0].data.tags.join(',') : displayPosts[0].tags.join(',')}>
+          <article class="group relative bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
+            <div class="relative h-80 sm:h-96">
+              <img 
+                src={displayPosts[0].data?.heroImage || displayPosts[0].heroImage} 
+                alt={displayPosts[0].data?.title || displayPosts[0].title}
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+            </div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <div class="flex flex-wrap gap-2 mb-3">
+                {(displayPosts[0].data?.tags || displayPosts[0].tags).slice(0, 3).map(tag => (
+                  <a href={`/blog/tag/${tag}`} class="text-xs px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm hover:bg-white/30 transition-colors">
+                    {tag}
+                  </a>
+                ))}
+              </div>
+              
+              <a 
+                href={`/blog/${displayPosts[0].slug}`} 
+                class="block group-hover:text-primary-300 transition-colors"
+              >
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">
+                  {displayPosts[0].data?.title || displayPosts[0].title}
+                </h2>
+              </a>
+              
+              <p class="text-gray-200 mb-4 line-clamp-2">
+                {displayPosts[0].data?.description || displayPosts[0].description}
+              </p>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="w-8 h-8 rounded-full bg-primary-200 flex items-center justify-center text-primary-700 font-medium">
+                    {(displayPosts[0].data?.author || displayPosts[0].author).charAt(0)}
+                  </div>
+                  <span class="ml-2 text-sm text-gray-200">
+                    {displayPosts[0].data?.author || displayPosts[0].author}
+                  </span>
+                </div>
+                <time class="text-sm text-gray-300">
+                  {new Date(displayPosts[0].data?.pubDate || displayPosts[0].pubDate).toLocaleDateString('en-us', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+              
+              <a 
+                href={`/blog/${displayPosts[0].slug}`} 
+                class="inline-flex items-center mt-5 text-white hover:text-primary-300 transition-colors"
+              >
+                Read More
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </article>
+        </div>
+      )}
+      
+      <!-- Tag filter -->
+      <div class="mb-12">
+        <div class="flex flex-wrap justify-center gap-2 mb-8" id="tag-filters">
+          <button 
+            class="tag-filter active px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium hover:bg-primary-200 dark:hover:bg-primary-800/30 transition-colors"
+            data-tag="all"
+          >
+            All Posts
+          </button>
+          
+          {allTags.length > 0
+            ? allTags.map(tag => (
+                <button 
+                  class="tag-filter px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  data-tag={tag}
+                >
+                  {tag}
+                </button>
+              ))
+            : ['Web Development', 'Design', 'JavaScript', 'TypeScript', 'CSS', 'Astro', 'React'].map(tag => (
+                <button 
+                  class="tag-filter px-4 py-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  data-tag={tag}
+                >
+                  {tag}
+                </button>
+              ))
+          }
+        </div>
+      </div>
+      
+      <!-- Blog Posts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="blog-posts-grid">
+        {displayPosts.slice(1).map(post => (
+          <div 
+            class="blog-post-card" 
+            data-tags={post.data ? post.data.tags.join(',') : post.tags.join(',')}
+          >
+            <BlogPostCard
+              title={post.data ? post.data.title : post.title}
+              description={post.data ? post.data.description : post.description}
+              pubDate={post.data ? post.data.pubDate : post.pubDate}
+              heroImage={post.data ? post.data.heroImage : post.heroImage}
+              tags={post.data ? post.data.tags : post.tags}
+              author={post.data ? post.data.author : post.author}
+              url={`/blog/${post.slug}`}
+            />
+          </div>
+        ))}
+      </div>
+      
+      <!-- No results message -->
+      <div id="no-results" class="hidden text-center py-12">
+        <p class="text-xl text-gray-500 dark:text-gray-400">No posts match the selected tag.</p>
+        <button 
+          id="clear-filters" 
+          class="mt-4 px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const tagFilters = document.querySelectorAll('.tag-filter');
+    const blogPostCards = document.querySelectorAll('.blog-post-card');
+    const noResults = document.getElementById('no-results');
+    const clearFilters = document.getElementById('clear-filters');
+    
+    // Filter posts by tag
+    function filterPosts(tag) {
+      let visibleCount = 0;
+      
+      blogPostCards.forEach(card => {
+        const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+        
+        if (tag === 'all' || cardTags.includes(tag)) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      
+      // Show/hide no results message
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+      
+      // Update active filter button
+      tagFilters.forEach(btn => {
+        if (btn.dataset.tag === tag) {
+          btn.classList.add('active', 'bg-primary-100', 'dark:bg-primary-900/30', 'text-primary-700', 'dark:text-primary-300');
+          btn.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+        } else {
+          btn.classList.remove('active', 'bg-primary-100', 'dark:bg-primary-900/30', 'text-primary-700', 'dark:text-primary-300');
+          btn.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-700', 'dark:text-gray-300');
+        }
+      });
+    }
+    
+    // Add click event to filter buttons
+    tagFilters.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.dataset.tag;
+        filterPosts(tag);
+      });
+    });
+    
+    // Clear filters
+    if (clearFilters) {
+      clearFilters.addEventListener('click', () => {
+        filterPosts('all');
+      });
+    }
+  });
+</script>
