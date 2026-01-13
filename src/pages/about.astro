@@ -5,37 +5,40 @@ import Layout from '../layouts/Layout.astro';
 const experiences = [
   {
     period: '2021 - 2024',
-    title: 'Senior Frontend Developer',
+    title: 'Team Lead & Full Stack Developer',
     company: 'Nonceblox',
-    description: 'Leading the front-end development team, architecting new features, and improving performance for a SaaS platform with over 50,000 users.',
-    technologies: ['React', 'TypeScript', 'Redux', 'GraphQL', 'Tailwind CSS']
+    experience: '3 years',
+    description: 'Led a team of 5 developers to build Web3 mobile applications and websites. Architected scalable solutions and mentored junior developers while delivering high-quality blockchain-based products.',
+    technologies: ['AWS', 'Web3', 'Node.js', 'Next.js', 'Electron', 'React']
   },
   {
-    period: '2020 - 2023',
+    period: '2020 - 2021',
     title: 'Full Stack Developer',
+    experience: '1 year 8 months',
     company: 'Mysence Technologies',
-    description: 'Developed and maintained various client projects, implementing both front-end interfaces and back-end APIs.',
-    technologies: ['React', 'Node.js', 'Express', 'MongoDB', 'AWS']
+    description: 'Core member of the Stackabl product team — a desktop application for easily setting up PHP frameworks and development environments. Built and integrated multiple key features of the product.',
+    technologies: ['React', 'Node.js', 'Express', 'Electron.js', 'AWS']
   },
   {
-    period: '2018 - 2020',
+    period: '2019 - 2020',
     title: 'Junior Developer',
+    experience: '1 year 1 month',
     company: 'Apptunix',
-    description: "Worked on the company's main product, a project management tool for startups.",
-    technologies: ['JavaScript', 'Vue.js', 'Firebase', 'CSS']
+    description: 'Developed backend solutions for multiple client projects across diverse domains including taxi services, fleet management, and order management systems.',
+    technologies: ['JavaScript', 'Node.js', 'MongoDB', 'Express.js', 'React.js']
   }
 ];
 
 // Education data
 const education = [
   {
-    period: '2016 - 2018',
+    period: '2019 - 2021',
     degree: 'Master of Science in Computer Science',
     institution: 'Punjab University',
-    description: 'Specialized in Human-Computer Interaction and Software Engineering.'
+    description: 'Specialized  Software Engineering.'
   },
   {
-    period: '2012 - 2016',
+    period: '2015 - 2018',
     degree: 'Bachelor of Science in Computer Science',
     institution: 'Punjab University',
     description: 'Graduated with honors. Active member of the Web Development Club.'
@@ -45,7 +48,8 @@ const education = [
 const skills = {
   backendDevelopment: ['Node.js', 'NestJS', 'Socket.io', 'GraphQL'],
   databaseDevOps: ['MongoDB', 'PostgreSQL', 'AWS', 'Jenkins', 'GitHub Actions'],
-  toolsMethods: ['Git', 'Docker', 'CI/CD', 'Agile', 'TDD']
+  toolsMethods: ['Git', 'Docker', 'CI/CD','Jenkins', 'Agile', 'TDD','Wix'],
+  frontend:['Reactjs','Electron','Nextjs']
 };
 
 const interests = [
@@ -60,7 +64,7 @@ const interests = [
 const personalInfo = {
   name: 'Kartik Kalia',
   email: 'kartikkalia74@gmail.com',
-  profileImage: 'https://portfolio-my.s3.ap-south-1.amazonaws.com/about/image+(10).png',
+  profileImage: '/IMG_7156.png',
   bio: "Hello! I'm a passionate full-stack developer with expertise in backend development, DevOps, and building scalable applications. I enjoy solving complex problems and creating solutions that make a difference.",
   socialLinks: {
     linkedin: 'https://www.linkedin.com/in/kartikkalia-0k0k/',
@@ -69,10 +73,18 @@ const personalInfo = {
   }
 };
 
-const story = [
-  "I began my journey in web development during college, where I built websites for student organizations and local businesses. After graduating with a degree in Computer Science, I joined a tech startup as a front-end developer, where I honed my skills in React and modern JavaScript.",
-  "Over the years, I've expanded my expertise to include back-end development, working with Node.js, Express, and various databases. I believe in writing clean, maintainable code and creating intuitive user experiences.",
-  "When I'm not coding, you can find me hiking in the mountains, reading science fiction, or experimenting with new cooking recipes."
+const storyContent = [
+  "ello! I'm a passionate full-stack developer with expertise in backend development, DevOps, and building scalable applications. I enjoy solving complex problems and creating solutions that make a difference.",
+  "After graduating with a degree in Computer Science, I joined a tech startup as a front-end intern, where I honed my skills in React and modern JavaScript. This foundational experience sparked my deep-seated interest in how systems work from end to end, leading me to explore both the visual and architectural sides of software.",
+  "My journey continued as a junior backend developer, where I delved deep into server-side logic and database architecture. Seeking new challenges, I later moved to work on sophisticated product stacks as a full-stack developer, bridging the gap between elegant interfaces and robust infrastructure.",
+  "More recently, I spent nearly two years at a Web3 company, joining as a senior developer and eventually being promoted to Team Lead. This role allowed me to mentor others while architecting decentralized solutions and managing cross-functional teams in a fast-paced environment.",
+  "Over the years, I've expanded my expertise to include backend development and deploying scalable solutions, working extensively with Node.js, Express, and various databases. I believe in writing clean, maintainable code and creating intuitive user experiences that stand the test of time."
+];
+
+const beyondCodeInterests = [
+  { name: 'Hiking', icon: 'landscape' },
+  { name: 'Gardening', icon: 'potted_plant' },
+  { name: 'Cooking', icon: 'restaurant' }
 ];
 ---
 
@@ -80,43 +92,91 @@ const story = [
   <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <!-- Header -->
     <header class="max-w-3xl mx-auto text-center mb-16">
-      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">About Me</h1>
-      <div class="h-1 w-20 bg-primary-500 mx-auto mb-6 rounded-full"></div>
-      <p class="text-xl text-gray-700 dark:text-gray-300">
-        Get to know my background, skills, and journey as a developer.
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        My <span class="text-primary-500">Story</span>
+        <div class="h-1 w-12 bg-primary-500 mx-auto mt-2 rounded-full"></div>
+      </h1>
+      <p class="text-xl text-gray-700 dark:text-gray-300 mt-6">
+        Building digital experiences through thoughtful engineering and creative problem-solving.
       </p>
     </header>
     
     <!-- Main content -->
-    <div class="max-w-4xl mx-auto">
-      <!-- Bio section -->
+    <div class="max-w-6xl mx-auto">
+      <!-- Story and Profile Section -->
       <section class="mb-16">
-        <div class="flex flex-col md:flex-row gap-12 items-center">
-          <div class="md:w-1/3">
-            <img 
-              src={personalInfo.profileImage} 
-              alt={personalInfo.name} 
-              class="rounded-lg shadow-xl w-full max-w-xs mx-auto"
-            />
-          </div>
-          <div class="md:w-2/3">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Who I Am</h2>
-            <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-              {personalInfo.bio}
-            </p>
-            {story.map(paragraph => (
-              <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">{paragraph}</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <!-- Left Column - Story -->
+          <div class="space-y-6">
+            <div class="text-gray-700 dark:text-gray-300 leading-relaxed">
+              <span class="text-6xl font-bold text-primary-500 leading-none">H</span>
+              <span class="text-lg">{storyContent[0]}</span>
+            </div>
+            {storyContent.slice(1).map((paragraph, index) => (
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+                {paragraph}
+              </p>
             ))}
-            <div class="flex gap-4 mt-4">
-              <a href={personalInfo.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <img src="/icons/linkedin.svg" alt="LinkedIn" class="h-6 w-6" />
-              </a>
-              <a href={personalInfo.socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-                <img src="/icons/github.svg" alt="GitHub" class="h-6 w-6" />
-              </a>
-              <a href={personalInfo.socialLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                <img src="/icons/twitter.svg" alt="Twitter" class="h-6 w-6" />
-              </a>
+          </div>
+          
+          <!-- Right Column - Profile Card -->
+          <div class="lg:sticky lg:top-8">
+            <div class="bg-white dark:bg-gray-800 rounded-xl border-2 border-primary-300 dark:border-primary-600 shadow-lg p-6">
+              <!-- Profile Image -->
+              <div class="mb-6">
+                <img 
+                  src={personalInfo.profileImage} 
+                  alt={personalInfo.name} 
+                  class="rounded-lg w-full h-auto object-cover"
+                />
+              </div>
+              
+              <!-- Social Links -->
+              <div class="flex justify-center gap-4 mb-8">
+                <a href={personalInfo.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="h-10 w-10 rounded-full bg-gray-700 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </a>
+                <a href={personalInfo.socialLinks.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="h-10 w-10 rounded-full bg-gray-700 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"/>
+                  </svg>
+                </a>
+                <a href={personalInfo.socialLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="h-10 w-10 rounded-full bg-gray-700 dark:bg-gray-600 flex items-center justify-center hover:bg-gray-600 dark:hover:bg-gray-500 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
+                  </svg>
+                </a>
+              </div>
+              
+              <!-- Beyond The Code Section -->
+              <div class="text-center">
+                <h3 class="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">BEYOND THE CODE</h3>
+                <div class="grid grid-cols-3 gap-3">
+                  {beyondCodeInterests.map(interest => {
+                    const iconMap = {
+                      landscape: (
+                        <span class="material-symbols-outlined text-primary text-xl">landscape</span>
+                      ),
+                      potted_plant: (
+                        <span class="material-symbols-outlined text-green-500 text-xl">potted_plant</span>
+                      ),
+                      restaurant: (
+                        <span class="material-symbols-outlined text-orange-400 text-xl">restaurant</span>
+                      )
+                    };
+                    return (
+                      <div class="flex flex-col items-center gap-2">
+                        <div class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                          {iconMap[interest.icon]}
+                        </div>
+                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">{interest.name}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -125,9 +185,22 @@ const story = [
       <!-- Skills section -->
       <section class="mb-16 bg-gray-50 dark:bg-gray-800/50 p-8 rounded-lg">
         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">My Skills</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Backend Development</h3>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Frontend</h3>
+            <ul class="space-y-2">
+              {skills.frontend.map(skill => (
+                <li class="flex items-center text-gray-700 dark:text-gray-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Backend</h3>
             <ul class="space-y-2">
               {skills.backendDevelopment.map(skill => (
                 <li class="flex items-center text-gray-700 dark:text-gray-300">
@@ -178,12 +251,22 @@ const story = [
               <div class="relative pl-8">
                 <div class="absolute left-0 top-1 h-5 w-5 rounded-full border-4 border-primary-500 bg-white dark:bg-gray-900"></div>
                 <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-                  <span class="text-sm font-medium text-primary-600 dark:text-primary-400 block mb-1">{job.period}</span>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-sm font-medium text-primary-600 dark:text-primary-400">{job.period}</span>
+                    {job.experience && (
+                      <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        {job.experience}
+                      </span>
+                    )}
+                  </div>
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{job.title}</h3>
-                  <p class="text-gray-600 dark:text-gray-400 mb-2">{job.company}</p>
-                  <p class="text-gray-700 dark:text-gray-300">{job.description}</p>
+                  <p class="text-gray-600 dark:text-gray-400 mb-3">{job.company}</p>
+                  <p class="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">{job.description}</p>
                   {job.technologies && (
-                    <div class="mt-2 flex flex-wrap gap-2">
+                    <div class="mt-3 flex flex-wrap gap-2">
                       {job.technologies.map(tech => (
                         <span class="bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-xs px-2.5 py-0.5 rounded-full">{tech}</span>
                       ))}
